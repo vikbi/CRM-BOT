@@ -7,33 +7,15 @@ module.exports = function list(session, info) {
 
 var rows = '';
 getWhitelabels(function(err,result){
-rows = _.chunk(result, 3).map(group =>
-                ({
-                    'type': 'ColumnSet',
-                    'columns': group.map(asWLItem)
-                }));
-        // session.conversationData.api_url = info.api_url;
-        // console.log(session.conversationData.api_url);
-            var card = {
-                'contentType': 'application/vnd.microsoft.card.adaptive',
-                'content': {
-                    'type': 'AdaptiveCard',
-                    'body': [
-                        {
-                            'type': 'TextBlock',
-                            'text': 'Welcome! Please select the CRM Whitelabel',
-                            'weight': 'bolder',
-                            'size': 'large'
-                        },
-                    ].concat(rows)
-                }
-            };
-
-            var msg = new builder.Message(session)
-                .addAttachment(card);
-
-            session.send(msg);
-            session.endDialog();
+    var rows = '';
+    // console.log(result);
+    session.conversationData.wl = result;
+            var rows = result.map(function(r){ return r.name });
+            console.log(rows);
+            builder.Prompts.choice(session,
+            'you have following list of available CRM.',
+            rows,
+            { listStyle: builder.ListStyle.button });
 
 });
 };
@@ -62,28 +44,4 @@ var con = mysql.createConnection({
  });
 }
 
-function asWLItem(wl) {
-    return {
-         'type': 'Action.Submit',
-        'size': '20',
-        'items': [
-            {
-                'type': 'TextBlock',
-                'horizontalAlignment': 'center',
-                'wrap': false,
-                'weight': 'bolder',
-                'text': wl.name,
-            },
-            {
-                'type': 'Image',
-                'size': 'auto',
-                'url': wl.logo
-            }
-        ],
-        'selectAction': {
-            'type': 'Action.Submit',
-            'data': _.extend({ type: 'wlSelection' }, wl)
-        }
-    };
-}
 
