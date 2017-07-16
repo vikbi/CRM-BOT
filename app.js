@@ -182,6 +182,7 @@ bot.dialog('/', [
             { listStyle: builder.ListStyle.button });
     },
     function (session, results) {
+        console.log(results.response.entity);
         if (results.response.entity.toLowerCase() == 'crm support' || results.response.entity.toLowerCase() == 'support') {
             session.beginDialog('crmsupport');
         } else if (results.response.entity.toLowerCase() == 'crm training') {
@@ -329,3 +330,33 @@ function getWhitelabels(callback) {
         });
     });
 }
+
+bot.dialog('crmsupport',[
+    function(session){
+        session.say('I can support you for CRM related issues and queries');
+        session.say('Have some frequently asked Questions, please check if you can find your answer');
+//------
+//====
+    }
+]);
+
+bot.dialog('crmtrainer',[
+    function(session){
+        
+    var card = new builder.HeroCard(session)
+            .title('Deposit Process')
+            .subtitle('We will guid you to make deposits from CRM and adding amount into your MT4 account')
+            .text('Deposits from crm helps you to add money into your MT4 account. This amount you can use for Trading')
+            .images([
+                builder.CardImage.create(session, 'http://img.etimg.com/thumb/msid-51580595,width-672,resizemode-4,imglength-32468/wealth/earn/post-rate-cut-is-a-co-op-bank-deposit-a-good-bet/bank-deposit.jpg')
+            ])
+            .buttons([
+                builder.CardAction.openUrl(session, 'https://drive.google.com/file/d/0B0unhSOwQlp-UUFRbmpNNUktRlU/view', 'Learn More')
+            ]);
+
+    // attach the card to the reply message
+    var msg = new builder.Message(session).addAttachment(card);
+    session.send(msg);
+//====
+    }
+]);
